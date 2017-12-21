@@ -1,6 +1,5 @@
-import {createRuleMap, bindVerifications, _verifyRules} from './util'
+import {createRuleMap, bindVerifications, _verifyRules, wrapCallbackWithVerifyMessage} from './util'
 export default (instance) => {
-    console.log(instance)
     var self = instance;
     var verifyRules = self.data.verifyRules || [];
     var verifyName = self.data.verifyName;
@@ -11,6 +10,7 @@ export default (instance) => {
 
     self.verify = (type, cb) => {
         var rules = type ? verifyRuleMap[type] : verifyRules;
+        cb = wrapCallbackWithVerifyMessage(self, cb);
         var cb2 = (ret) => {
             verifyCallback(ret);
             cb(ret);

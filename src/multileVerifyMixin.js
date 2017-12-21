@@ -12,7 +12,6 @@ export default (app) => {
                 if (ret.result === false) {
                     result.result = false;
                 }
-                console.log(count)
                 if (count === fields.length) {
                     cb(result);
                 }

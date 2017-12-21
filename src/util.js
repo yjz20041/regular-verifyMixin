@@ -3,6 +3,16 @@ const assertRule = (rule) => {
         throw new Error('the trigger of the rule must be present')
     }
 }
+
+const presetRule = {
+    require: /[^\s\ufeff\xa0]+/,
+    number: /^\d+$/,
+    float: /^\d+(.\d)?\d*$/,
+    url: /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/,
+    phone: /^\d{11}$/,
+    email: /^[a-z]([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?$/i
+}
+
 export const createRuleMap = rules => {
     var ret = {};
     rules.forEach( rule => {
@@ -20,7 +30,18 @@ export const createRuleMap = rules => {
     return ret;
 }
 
+export const wrapCallbackWithVerifyMessage = (self, cb) => ret => {
+    if (ret.result === false) {
+        self.verifyMessage = ret.message;
+    } else {
+        delete self.verifyMessage;
+    }
+    self.$update();
+    cb(ret);
+}
+
 export const bindVerifications = (self, ruleMap, verifyName, cb) => {
+    cb = wrapCallbackWithVerifyMessage(self, cb);
     Object.keys(ruleMap).forEach(triggerType => {
         self.$on(triggerType, (function(type) {
             return function () {
@@ -67,6 +88,16 @@ export const _verifyRules = (rules, value, order, name, cb) => {
 
 export const _verifyRule = (rule, value, cb) => {
     var pattern = rule.pattern;
+    if (typeof pattern === 'string') {
+
+        if (presetRule[pattern]) {
+            pattern = presetRule[pattern];
+        } else {
+            throw new Error(`the pattern of the rule should be 
+            one of the RegExp 、 function and string including 
+            'require/number/float/email/phone/url'`);
+        }
+    }
     if (pattern instanceof RegExp) {
         cb(pattern.test(value));
     } else if (typeof pattern === 'function') {
