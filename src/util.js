@@ -5,7 +5,9 @@ const assertRule = (rule) => {
 }
 
 const presetRule = {
-    require: /[^\s\ufeff\xa0]+/,
+    require: function (value, cb) {
+        cb(!!value && /[^\s\ufeff\xa0]+/.test(value));
+    },
     number: /^\d+$/,
     float: /^\d+(.\d)?\d*$/,
     url: /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/,
