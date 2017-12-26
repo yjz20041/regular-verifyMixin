@@ -39,7 +39,9 @@ export const wrapCallbackWithVerifyMessage = (self, cb) => ret => {
         delete self.verifyMessage;
     }
     self.$update();
-    cb(ret);
+    if (typeof cb === 'function') {
+        cb(ret);
+    }
 }
 
 export const bindVerifications = (self, ruleMap, verifyName, cb) => {
