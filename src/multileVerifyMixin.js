@@ -1,6 +1,10 @@
 export default (app) => {
     app.verifyFields = (fields, cb) => {
-        var result = {result: true};
+        var result = {
+            result: true,
+            message: {}
+        };
+        var values = {};
         var count = 0;
         if (!fields.length) {
             return cb(result);
@@ -8,11 +12,15 @@ export default (app) => {
         fields.forEach( field => {
             field.verify(null, ret => {
                 count++;
-                result[ret.name] = ret;
+                result.message[ret.name] = ret;
+                values[ret.name] = ret.value;
                 if (ret.result === false) {
                     result.result = false;
                 }
                 if (count === fields.length) {
+                    if (result.result === true) {
+                        result.values = values;
+                    }
                     cb(result);
                 }
             })
