@@ -46,7 +46,7 @@ export const wrapCallbackWithVerifyMessage = (self, cb) => ret => {
 
 export const bindVerifications = (self, ruleMap, verifyName, cb) => {
     cb = wrapCallbackWithVerifyMessage(self, cb);
-    Object.keys(ruleMap).forEach(triggerType => {
+    Object.keys(ruleMap).forEach(function(triggerType) {
         self.$on(triggerType, (function(type) {
             return function () {
                 var typeRules = ruleMap[type];
