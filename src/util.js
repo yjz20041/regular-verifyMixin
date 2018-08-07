@@ -6,7 +6,10 @@ const assertRule = (rule) => {
 
 const presetRule = {
     require: function (value, cb) {
-        cb(!!value && /[^\s\ufeff\xa0]+/.test(value));
+        cb(!(value === undefined || 
+            value === '' || 
+            value === NaN ||
+            value === null));
     },
     number: /^\d+$/,
     float: /^\d+(.\d)?\d*$/,
