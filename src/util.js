@@ -8,7 +8,8 @@ const presetRule = {
   require: function (value, cb) {
     cb(!(value === undefined || 
             value === '' || 
-            isNaN(value) ||
+            // eslint-disable-next-line use-isnan
+            value === NaN ||
             value === null));
   },
   number: /^\d+$/,

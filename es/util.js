@@ -20,13 +20,13 @@ var assertRule = function assertRule(rule) {
 
 var presetRule = {
   require: function require(value, cb) {
-    cb(!(value === undefined || value === '' || value === NaN || value === null));
+    cb(!(value === undefined || value === '' || isNaN(value) || value === null));
   },
   number: /^\d+$/,
   float: /^\d+(.\d)?\d*$/,
-  url: /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/,
+  url: /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&:/~+#]*[\w\-@?^=%&/~+#])?/,
   phone: /^\d{11}$/,
-  email: /^[a-z]([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[\.][a-z]{2,3}([\.][a-z]{2})?$/i
+  email: /^[a-z]([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[.][a-z]{2,3}([.][a-z]{2})?$/i
 };
 
 var createRuleMap = function createRuleMap(rules) {
