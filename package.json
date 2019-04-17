@@ -1,19 +1,46 @@
 {
   "name": "regular-verifymixin",
-  "version": "0.1.8",
+  "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "es",
+  "module": "es",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf es && babel src --out-dir es --copy-files",
+    "watch": "babel src --watch --out-dir es --copy-files",
+    "lint": "echo \"eslint start...\" && eslint --ext .js -f table src/ && echo \"eslint finish\" ",
+    "prepublish": "echo \" prepublish... \" && npm run build "
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yjz20041/regular-verifyMixin.git"
   },
   "author": "hzyangjiezheng",
-  "license": "MIT",
+  "browserslist": [
+    ">0.2%",
+    "not dead"
+  ],
+  "eslintIgnore": [
+    "es/*"
+  ],
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/preset-env": "^7.2.3",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.12.0",
+    "pre-commit": "^1.2.2"
+  },
+  "pre-commit": [
+    "lint"
+  ],
   "bugs": {
     "url": "https://github.com/yjz20041/regular-verifyMixin/issues"
   },
-  "homepage": "https://github.com/yjz20041/regular-verifyMixin#readme"
+  "homepage": "https://github.com/yjz20041/regular-verifyMixin#readme",
+  "dependencies": {
+    "@babel/runtime-corejs2": "^7.4.3"
+  }
 }
