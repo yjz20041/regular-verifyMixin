@@ -1,16 +1,4 @@
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime-corejs2/helpers/interopRequireDefault");
-
-var _Object$defineProperty = require("@babel/runtime-corejs2/core-js/object/define-property");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports._verifyRule = exports._verifyRules = exports.bindVerifications = exports.wrapCallbackWithVerifyMessage = exports.createRuleMap = void 0;
-
-var _keys = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/keys"));
+import _Object$keys from "@babel/runtime-corejs2/core-js/object/keys";
 
 var assertRule = function assertRule(rule) {
   if (typeof rule.trigger !== 'string' || !rule.trigger) {
@@ -20,7 +8,8 @@ var assertRule = function assertRule(rule) {
 
 var presetRule = {
   require: function require(value, cb) {
-    cb(!(value === undefined || value === '' || isNaN(value) || value === null));
+    cb(!(value === undefined || value === '' || // eslint-disable-next-line use-isnan
+    value === NaN || value === null));
   },
   number: /^\d+$/,
   float: /^\d+(.\d)?\d*$/,
@@ -28,8 +17,7 @@ var presetRule = {
   phone: /^\d{11}$/,
   email: /^[a-z]([a-z0-9]*[-_]?[a-z0-9]+)*@([a-z0-9]*[-_]?[a-z0-9]+)+[.][a-z]{2,3}([.][a-z]{2})?$/i
 };
-
-var createRuleMap = function createRuleMap(rules) {
+export var createRuleMap = function createRuleMap(rules) {
   var ret = {};
   rules.forEach(function (rule) {
     assertRule(rule);
@@ -46,10 +34,7 @@ var createRuleMap = function createRuleMap(rules) {
   });
   return ret;
 };
-
-exports.createRuleMap = createRuleMap;
-
-var wrapCallbackWithVerifyMessage = function wrapCallbackWithVerifyMessage(self, cb) {
+export var wrapCallbackWithVerifyMessage = function wrapCallbackWithVerifyMessage(self, cb) {
   return function (ret) {
     if (ret.result === false) {
       self.verifyMessage = ret.message;
@@ -64,12 +49,10 @@ var wrapCallbackWithVerifyMessage = function wrapCallbackWithVerifyMessage(self,
     }
   };
 };
-
-exports.wrapCallbackWithVerifyMessage = wrapCallbackWithVerifyMessage;
-
-var bindVerifications = function bindVerifications(self, ruleMap, verifyName, cb) {
+export var bindVerifications = function bindVerifications(self, ruleMap, verifyName, cb) {
   cb = wrapCallbackWithVerifyMessage(self, cb);
-  (0, _keys.default)(ruleMap).forEach(function (triggerType) {
+
+  _Object$keys(ruleMap).forEach(function (triggerType) {
     self.$on(triggerType, function (type) {
       return function () {
         var typeRules = ruleMap[type];
@@ -82,10 +65,7 @@ var bindVerifications = function bindVerifications(self, ruleMap, verifyName, cb
     }(triggerType));
   });
 };
-
-exports.bindVerifications = bindVerifications;
-
-var _verifyRules = function _verifyRules(rules, value, order, name, cb) {
+export var _verifyRules = function _verifyRules(rules, value, order, name, cb) {
   var rule = rules[order];
   var message = rule.message;
 
@@ -110,10 +90,7 @@ var _verifyRules = function _verifyRules(rules, value, order, name, cb) {
     }
   });
 };
-
-exports._verifyRules = _verifyRules;
-
-var _verifyRule = function _verifyRule(rule, value, cb) {
+export var _verifyRule = function _verifyRule(rule, value, cb) {
   var pattern = rule.pattern;
 
   if (typeof pattern === 'string') {
@@ -132,5 +109,3 @@ var _verifyRule = function _verifyRule(rule, value, cb) {
     });
   }
 };
-
-exports._verifyRule = _verifyRule;
