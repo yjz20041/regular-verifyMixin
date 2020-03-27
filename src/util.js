@@ -48,21 +48,39 @@ export const wrapCallbackWithVerifyMessage = (self, cb) => ret => {
   }
 }
 
-export const bindVerifications = (self, ruleMap, verifyName, cb) => {
-  cb = wrapCallbackWithVerifyMessage(self, cb);
-  Object.keys(ruleMap).forEach(function(triggerType) {
-    self.$on(triggerType, (function(type) {
-      return function () {
-        var typeRules = ruleMap[type];
-        var value = self.getValue();
-        if (typeRules.length) {
-          _verifyRules(typeRules, value, 0,
-            verifyName, cb);
+export const bindVerifications = () => {
+  let events = [];
+  const unbind = (self) => {
+    events.forEach(event => {
+      const {
+        type,
+        handler
+      } = event;
+      self.$off(type, handler);
+    });
+    events = [];
+  }
+  return (self, ruleMap, verifyName, cb) => {
+    cb = wrapCallbackWithVerifyMessage(self, cb);
+    unbind(self);
+    Object.keys(ruleMap).forEach(function(triggerType) {
+      const handler = (function(type) {
+        return function () {
+          var typeRules = ruleMap[type];
+          var value = self.getValue();
+          if (typeRules.length) {
+            _verifyRules(typeRules, value, 0,
+              verifyName, cb);
+          }
         }
-      }
-          
-    })(triggerType))
-  })
+      })(triggerType);
+      events.push({
+        type: triggerType,
+        handler
+      })
+      self.$on(triggerType, handler);
+    })
+  }
 }
 
 
