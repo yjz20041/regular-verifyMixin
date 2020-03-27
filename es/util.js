@@ -49,21 +49,41 @@ export var wrapCallbackWithVerifyMessage = function wrapCallbackWithVerifyMessag
     }
   };
 };
-export var bindVerifications = function bindVerifications(self, ruleMap, verifyName, cb) {
-  cb = wrapCallbackWithVerifyMessage(self, cb);
+export var bindVerifications = function bindVerifications() {
+  var events = [];
 
-  _Object$keys(ruleMap).forEach(function (triggerType) {
-    self.$on(triggerType, function (type) {
-      return function () {
-        var typeRules = ruleMap[type];
-        var value = self.getValue();
+  var unbind = function unbind(self) {
+    events.forEach(function (event) {
+      var type = event.type,
+          handler = event.handler;
+      self.$off(type, handler);
+    });
+    events = [];
+  };
 
-        if (typeRules.length) {
-          _verifyRules(typeRules, value, 0, verifyName, cb);
-        }
-      };
-    }(triggerType));
-  });
+  return function (self, ruleMap, verifyName, cb) {
+    cb = wrapCallbackWithVerifyMessage(self, cb);
+    unbind(self);
+
+    _Object$keys(ruleMap).forEach(function (triggerType) {
+      var handler = function (type) {
+        return function () {
+          var typeRules = ruleMap[type];
+          var value = self.getValue();
+
+          if (typeRules.length) {
+            _verifyRules(typeRules, value, 0, verifyName, cb);
+          }
+        };
+      }(triggerType);
+
+      events.push({
+        type: triggerType,
+        handler: handler
+      });
+      self.$on(triggerType, handler);
+    });
+  };
 };
 export var _verifyRules = function _verifyRules(rules, value, order, name, cb) {
   var rule = rules[order];
